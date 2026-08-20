@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Decisio — Decision Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0b0f19;
+      --bg-secondary: #111827;
+      --bg-card: rgba(17, 24, 39, 0.7);
+      --bg-card-hover: rgba(31, 41, 55, 0.8);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-focus: #6366f1;
+      --text-primary: #f9fafb;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --accent-primary: #6366f1;
+      --accent-glow: rgba(99, 102, 241, 0.25);
+      --accent-green: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-purple: #a855f7;
+      --accent-blue: #3b82f6;
+      --accent-red: #ef4444;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      background-image:
+        radial-gradient(circle at 15% 15%, rgba(99, 102, 241, 0.12) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+      background-attachment: fixed;
+      line-height: 1.5;
+    }
+    .app-container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+    /* Header */
+    header {
+      display: flex; justify-content: space-between; align-items: center;
+      padding-bottom: 24px; border-bottom: 1px solid var(--border-color);
+      margin-bottom: 24px; flex-wrap: wrap; gap: 16px;
+    }
+    .logo-section { display: flex; align-items: center; gap: 14px; }
+    .logo-badge {
+      width: 44px; height: 44px; border-radius: var(--radius-md);
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 22px;
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+    .logo-text h1 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+    .logo-text h1 span {
+      background: linear-gradient(90deg, #818cf8, #c084fc);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .logo-text p { font-size: 13px; color: var(--text-secondary); }
+    .header-status { display: flex; align-items: center; gap: 12px; }
+    .status-pill {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      padding: 6px 14px; border-radius: 999px; font-size: 13px; font-weight: 500;
+      backdrop-filter: blur(8px);
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background-color: var(--accent-green); box-shadow: 0 0 8px var(--accent-green); }
+    .tag-badge {
+      font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 3px 8px; background: rgba(99, 102, 241, 0.15); color: #818cf8;
+      border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 999px; font-weight: 600;
+    }
+
+    /* Input Section */
+    .input-section {
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px;
+      backdrop-filter: blur(12px);
+    }
+    .input-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 12px; }
+    .input-header h2 { font-size: 16px; font-weight: 600; }
+    .input-row { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+    .input-row .field-main { flex: 1; min-width: 300px; }
+    .input-row .field-sm { width: 200px; }
+    label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 5px; }
+    input, select {
+      width: 100%; background: rgba(11, 15, 25, 0.8); border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm); padding: 10px 14px; color: var(--text-primary);
+      font-family: inherit; font-size: 14px; transition: all 0.2s; outline: none;
+    }
+    input:focus, select:focus { border-color: var(--accent-primary); box-shadow: 0 0 0 3px var(--accent-glow); }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+      padding: 10px 24px; border-radius: var(--radius-sm); font-weight: 600; font-size: 14px;
+      cursor: pointer; border: none; transition: all 0.2s ease; white-space: nowrap;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, #4f46e5); color: white;
+      box-shadow: 0 4px 14px var(--accent-glow);
+    }
+    .btn-primary:hover:not(:disabled) { background: linear-gradient(135deg, #4f46e5, #4338ca); transform: translateY(-1px); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+    .spinner { border: 2px solid rgba(255,255,255,0.1); border-top: 2px solid white; border-radius: 50%; width: 16px; height: 16px; animation: spin 0.6s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* Pipeline Log */
+    .pipeline-log {
+      background: rgba(0,0,0,0.3); border: 1px solid var(--border-color);
+      border-radius: var(--radius-md); padding: 16px; margin-bottom: 24px;
+    }
+    .pipeline-log h3 { font-size: 13px; font-weight: 600; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 12px; }
+    .pipeline-stage {
+      display: flex; align-items: center; gap: 10px; padding: 6px 0;
+      font-size: 13px; border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .pipeline-stage:last-child { border-bottom: none; }
+    .stage-icon { width: 20px; text-align: center; font-size: 14px; }
+    .stage-name { font-weight: 600; color: var(--text-primary); min-width: 80px; }
+    .stage-msg { color: var(--text-secondary); flex: 1; }
+    .stage-time { color: var(--text-muted); font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+
+    /* No Decision State */
+    .no-decision {
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-left: 4px solid var(--accent-blue);
+      border-radius: var(--radius-md); padding: 28px; text-align: center;
+    }
+    .no-decision h3 { font-size: 18px; font-weight: 700; margin-bottom: 8px; color: var(--text-primary); }
+    .no-decision p { color: var(--text-secondary); font-size: 14px; margin-bottom: 16px; }
+    .no-decision .skip-reason {
+      display: inline-block; background: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.2);
+      padding: 6px 14px; border-radius: 999px; font-size: 12px; color: #93c5fd;
+    }
+
+    /* Decision Card */
+    .decision-card {
+      background: var(--bg-card); border: 1px solid var(--border-color);
+      border-left: 4px solid var(--accent-primary);
+      border-radius: var(--radius-md); padding: 24px; margin-bottom: 20px;
+      backdrop-filter: blur(12px);
+    }
+    .decision-section { margin-bottom: 18px; }
+    .decision-section:last-child { margin-bottom: 0; }
+    .section-label {
+      font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-muted); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;
+    }
+    .decision-title { font-size: 18px; font-weight: 700; color: var(--text-primary); margin-bottom: 4px; }
+    .decision-summary { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+    .decision-rationale { font-size: 13px; color: #c4b5fd; line-height: 1.6; font-style: italic; }
+
+    /* Category & Confidence Bar */
+    .decision-meta {
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 18px;
+    }
+    .category-badge {
+      font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 4px;
+      text-transform: uppercase; letter-spacing: 0.04em;
+    }
+    .cat-technology_selection { background: rgba(59,130,246,0.2); color: #93c5fd; border: 1px solid rgba(59,130,246,0.3); }
+    .cat-architecture { background: rgba(168,85,247,0.2); color: #d8b4fe; border: 1px solid rgba(168,85,247,0.3); }
+    .cat-pattern_adoption { background: rgba(16,185,129,0.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+    .cat-refactoring { background: rgba(245,158,11,0.2); color: #fde68a; border: 1px solid rgba(245,158,11,0.3); }
+    .cat-deprecation { background: rgba(239,68,68,0.2); color: #fca5a5; border: 1px solid rgba(239,68,68,0.3); }
+    .cat-tradeoff { background: rgba(236,72,153,0.2); color: #f9a8d4; border: 1px solid rgba(236,72,153,0.3); }
+    .cat-other { background: rgba(156,163,175,0.2); color: #d1d5db; border: 1px solid rgba(156,163,175,0.3); }
+    .confidence-bar {
+      display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text-secondary);
+    }
+    .confidence-track { width: 80px; height: 6px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
+    .confidence-fill { height: 100%; border-radius: 3px; transition: width 0.3s; }
+
+    /* Evidence */
+    .evidence-item {
+      background: rgba(0,0,0,0.2); border-left: 3px solid var(--accent-purple);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0; padding: 10px 14px; margin-bottom: 8px;
+    }
+    .evidence-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .evidence-badge { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 3px; text-transform: uppercase; }
+    .badge-verified { background: rgba(16,185,129,0.2); color: #6ee7b7; border: 1px solid rgba(16,185,129,0.3); }
+    .badge-unverified { background: rgba(245,158,11,0.2); color: #fde68a; border: 1px solid rgba(245,158,11,0.3); }
+    .evidence-quote { font-size: 12px; font-style: italic; color: #c4b5fd; line-height: 1.5; }
+    .evidence-source { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+    .evidence-source a { color: #818cf8; text-decoration: none; }
+    .evidence-source a:hover { text-decoration: underline; }
+
+    /* Affected Files */
+    .files-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+    .file-chip {
+      font-family: 'JetBrains Mono', monospace; font-size: 11px;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--border-color);
+      padding: 3px 8px; border-radius: 4px; color: var(--text-secondary);
+      display: flex; align-items: center; gap: 4px;
+    }
+    .file-stat { color: var(--text-muted); font-size: 10px; }
+    .file-stat.add { color: #6ee7b7; }
+    .file-stat.del { color: #fca5a5; }
+
+    /* Technologies */
+    .tech-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .tech-chip {
+      font-size: 11px; font-weight: 500; padding: 3px 10px; border-radius: 999px;
+      background: rgba(99,102,241,0.1); color: #a5b4fc; border: 1px solid rgba(99,102,241,0.2);
+    }
+    .tech-relationship { font-size: 9px; color: var(--text-muted); text-transform: uppercase; margin-left: 4px; }
+
+    /* Empty State */
+    .empty-state {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 60px 40px; border: 2px dashed var(--border-color);
+      border-radius: var(--radius-md); color: var(--text-muted);
+    }
+    .empty-state h4 { font-size: 16px; margin-top: 12px; color: var(--text-secondary); }
+    .empty-state p { font-size: 13px; margin-top: 4px; }
+
+    /* Error State */
+    .error-state {
+      background: rgba(239,68,68,0.05); border: 1px solid rgba(239,68,68,0.2);
+      border-radius: var(--radius-md); padding: 20px; color: #fca5a5; text-align: center;
+    }
+
+    /* Summary Bar */
+    .summary-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(0,0,0,0.2); padding: 8px 14px; border-radius: var(--radius-sm);
+      font-size: 12px; color: var(--text-muted); margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .input-row { flex-direction: column; }
+      .input-row .field-sm { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+
+    <!-- Header -->
+    <header>
+      <div class="logo-section">
+        <div class="logo-badge">D</div>
+        <div class="logo-text">
+          <h1>Decisio <span>Intelligence</span></h1>
+          <p>Understand technical decisions from GitHub development history</p>
+        </div>
+      </div>
+      <div class="header-status">
+        <div class="status-pill">
+          <div class="dot" id="serverStatusDot"></div>
+          <span id="serverStatusText">Connected</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Input Section -->
+    <div class="input-section">
+      <div class="input-header">
+        <h2>Analyze a Pull Request</h2>
+        <span class="tag-badge">No Token Required for Public Repos</span>
+      </div>
+      <div class="input-row">
+        <div class="field-main">
+          <label>GitHub PR URL</label>
+          <input type="text" id="prUrlInput"
+                 placeholder="https://github.com/owner/repo/pull/123"
+                 oninput="parsePrUrl(this.value)">
+        </div>
+        <div class="field-sm">
+          <label>LLM Provider</label>
+          <select id="providerSelect">
+            <option value="groq" selected>Groq</option>
+            <option value="openai">OpenAI</option>
+            <option value="anthropic">Claude</option>
+            <option value="grok">Grok (xAI)</option>
+            <option value="mock">Mock (Offline)</option>
+          </select>
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <button class="btn btn-primary" id="analyzeBtn" onclick="analyzepr()">
+            <span id="analyzeBtnText">Analyze</span>
+            <div class="spinner" id="analyzeSpinner" style="display:none;"></div>
+          </button>
+        </div>
+      </div>
+      <!-- Hidden fields parsed from URL -->
+      <input type="hidden" id="prOwner">
+      <input type="hidden" id="prRepo">
+      <input type="hidden" id="prNumber">
+    </div>
+
+    <!-- Results -->
+    <div id="resultsArea">
+      <div class="empty-state">
+        <div style="font-size: 36px; opacity: 0.4;">&#x1F50D;</div>
+        <h4>Paste a GitHub PR URL above</h4>
+        <p>Decisio will analyze the PR and determine whether it contains a meaningful technical decision.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function parsePrUrl(url) {
+      if (!url) return;
+      const m = url.trim().match(/github\.com\/([^\/]+)\/([^\/]+)\/pull\/(\d+)/i);
+      if (m) {
+        document.getElementById('prOwner').value = m[1];
+        document.getElementById('prRepo').value = m[2];
+        document.getElementById('prNumber').value = m[3];
+      }
+    }
+
+    async function analyzepr() {
+      const owner = document.getElementById('prOwner').value.trim();
+      const repo = document.getElementById('prRepo').value.trim();
+      const prNum = parseInt(document.getElementById('prNumber').value);
+      const provider = document.getElementById('providerSelect').value;
+
+      if (!owner || !repo || !prNum) {
+        alert("Please paste a valid GitHub PR URL (e.g. https://github.com/owner/repo/pull/123)");
+        return;
+      }
+
+      const btn = document.getElementById('analyzeBtn');
+      const btnText = document.getElementById('analyzeBtnText');
+      const spinner = document.getElementById('analyzeSpinner');
+      btn.disabled = true;
+      btnText.textContent = "Analyzing...";
+      spinner.style.display = "block";
+
+      try {
+        const resp = await fetch('/api/v1/decisions/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ owner, repo, pull_number: prNum, provider })
+        });
+
+        let data;
+        const text = await resp.text();
+        try { data = JSON.parse(text); } catch { throw new Error(text.substring(0, 200)); }
+        if (!resp.ok) throw new Error(data.detail || "Analysis failed");
+
+        renderResult(data);
+      } catch (err) {
+        document.getElementById('resultsArea').innerHTML = `
+          <div class="error-state">
+            <h4>Analysis Error</h4>
+            <p style="font-size:13px; margin-top:6px;">${esc(err.message)}</p>
+          </div>`;
+      } finally {
+        btn.disabled = false;
+        btnText.textContent = "Analyze";
+        spinner.style.display = "none";
+      }
+    }
+
+    function renderResult(data) {
+      const area = document.getElementById('resultsArea');
+      let html = '';
+
+      // Summary bar
+      html += `<div class="summary-bar">
+        <span><strong>${esc(data.repository)}</strong> PR #${data.pr_number}</span>
+        <span>Author: <strong>${esc(data.pr_author)}</strong></span>
+        <span>Provider: <strong>${esc(data.provider_used)}</strong></span>
+        <span>Total: <strong>${data.total_duration_ms}ms</strong></span>
+      </div>`;
+
+      // Pipeline log
+      html += renderPipelineLog(data.pipeline_log || []);
+
+      // Decisions or No-Decision
+      if (!data.has_significant_decision || !data.decisions || data.decisions.length === 0) {
+        const skipReason = data.detection?.skip_reason || "No architectural signals detected in this PR.";
+        const conf = data.detection?.heuristic_confidence ?? 0;
+        html += `<div class="no-decision">
+          <h3>No Significant Technical Decision Detected</h3>
+          <p>Decisio analyzed this PR and determined it does not contain a meaningful architectural or technical decision.</p>
+          <div class="skip-reason">${esc(skipReason)} (confidence: ${Math.round(conf*100)}%)</div>
+        </div>`;
+      } else {
+        for (const d of data.decisions) {
+          html += renderDecisionCard(d, data);
+        }
+      }
+
+      area.innerHTML = html;
+    }
+
+    function renderPipelineLog(stages) {
+      if (!stages.length) return '';
+      const icons = {
+        completed: '<span style="color:#10b981">&#10003;</span>',
+        failed: '<span style="color:#ef4444">&#10007;</span>',
+        skipped: '<span style="color:#6b7280">&#8212;</span>',
+        running: '<span style="color:#f59e0b">&#9679;</span>',
+        pending: '<span style="color:#6b7280">&#9679;</span>',
+      };
+      let rows = stages.map(s => `
+        <div class="pipeline-stage">
+          <div class="stage-icon">${icons[s.status] || icons.pending}</div>
+          <div class="stage-name">${esc(s.name)}</div>
+          <div class="stage-msg">${esc(s.message || '')}</div>
+          <div class="stage-time">${s.duration_ms ? s.duration_ms + 'ms' : ''}</div>
+        </div>
+      `).join('');
+
+      return `<div class="pipeline-log">
+        <h3>Analysis Pipeline</h3>
+        ${rows}
+      </div>`;
+    }
+
+    function renderDecisionCard(d, data) {
+      const catClass = 'cat-' + (d.category || 'other').toLowerCase();
+      const confPct = Math.round((d.confidence || 0) * 100);
+      const confColor = confPct >= 70 ? '#10b981' : confPct >= 40 ? '#f59e0b' : '#ef4444';
+
+      // Evidence
+      let evidenceHtml = '';
+      if (d.evidence && d.evidence.length) {
+        evidenceHtml = d.evidence.map(e => {
+          const verified = e.verified;
+          const badgeClass = verified ? 'badge-verified' : 'badge-unverified';
+          const badgeText = verified ? 'Verified' : 'Unverified';
+          const sourceLink = e.matched_source_url
+            ? `<a href="${esc(e.matched_source_url)}" target="_blank" rel="noopener">View on GitHub &rarr;</a>`
+            : (e.source_description ? esc(e.source_description) : 'Unknown source');
+          return `<div class="evidence-item" style="border-left-color: ${verified ? 'var(--accent-green)' : 'var(--accent-amber)'}">
+            <div class="evidence-header">
+              <span class="evidence-badge ${badgeClass}">${badgeText}</span>
+              ${e.match_score ? `<span style="font-size:10px;color:var(--text-muted)">Match: ${Math.round(e.match_score*100)}%</span>` : ''}
+            </div>
+            <div class="evidence-quote">"${esc(e.quote)}"</div>
+            <div class="evidence-source">${sourceLink}</div>
+          </div>`;
+        }).join('');
+      }
+
+      // Affected files
+      let filesHtml = '';
+      if (d.affected_files && d.affected_files.length) {
+        const chips = d.affected_files.slice(0, 20).map(f =>
+          `<span class="file-chip">
+            ${esc(f.file_path.split('/').pop())}
+            <span class="file-stat add">+${f.additions}</span>
+            <span class="file-stat del">-${f.deletions}</span>
+          </span>`
+        ).join('');
+        filesHtml = `<div class="decision-section">
+          <div class="section-label">Affected Files (${d.affected_files.length})</div>
+          <div class="files-grid">${chips}</div>
+        </div>`;
+      }
+
+      // Technologies
+      let techHtml = '';
+      if (d.technologies && d.technologies.length) {
+        const chips = d.technologies.map(t =>
+          `<span class="tech-chip">${esc(t.name)}<span class="tech-relationship">${esc(t.relationship)}</span></span>`
+        ).join('');
+        techHtml = `<div class="decision-section">
+          <div class="section-label">Technologies</div>
+          <div class="tech-chips">${chips}</div>
+        </div>`;
+      }
+
+      return `<div class="decision-card">
+        <div class="decision-meta">
+          <span class="category-badge ${catClass}">${esc(d.category || 'other')}</span>
+          <div class="confidence-bar">
+            Confidence:
+            <div class="confidence-track">
+              <div class="confidence-fill" style="width:${confPct}%; background:${confColor};"></div>
+            </div>
+            <strong style="color:${confColor}">${confPct}%</strong>
+            ${d.verified_evidence_count !== undefined ? `<span style="color:var(--text-muted)">(${d.verified_evidence_count}/${d.total_evidence_count} evidence verified)</span>` : ''}
+          </div>
+        </div>
+
+        <div class="decision-section">
+          <div class="section-label">Decision</div>
+          <div class="decision-title">${esc(d.title)}</div>
+          <div class="decision-summary">${esc(d.summary)}</div>
+        </div>
+
+        ${d.rationale ? `<div class="decision-section">
+          <div class="section-label">Why</div>
+          <div class="decision-rationale">${esc(d.rationale)}</div>
+        </div>` : ''}
+
+        ${evidenceHtml ? `<div class="decision-section">
+          <div class="section-label">Evidence</div>
+          ${evidenceHtml}
+        </div>` : ''}
+
+        ${filesHtml}
+        ${techHtml}
+      </div>`;
+    }
+
+    function esc(text) {
+      if (!text) return '';
+      const d = document.createElement('div');
+      d.textContent = String(text);
+      return d.innerHTML;
+    }
+
+    // Health check
+    fetch('/health').then(r => r.json()).then(d => {
+      document.getElementById('serverStatusText').textContent = 'Connected';
+    }).catch(() => {
+      document.getElementById('serverStatusDot').style.backgroundColor = '#ef4444';
+      document.getElementById('serverStatusText').textContent = 'Offline';
+    });
+  </script>
+</body>
+</html>
